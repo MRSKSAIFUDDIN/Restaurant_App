@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CommonService } from './common.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,51 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'ACrud';
+  allUser: any;
+  userObj={
+    name:'',
+    mobile:'',
+    email:'',
+    password:'',
+    id:''
+  };
+  isEdit=false;
+  constructor(private commonService: CommonService){
+  }
+
+  ngOnInit(){
+    this.getLatestUser();
+  }
+
+  addUser(formObj: any){
+    console.log(formObj);
+    this.commonService.createUser(formObj).subscribe((response)=>{
+      alert("User has been Added");
+      this.getLatestUser();
+    })
+  }
+
+  getLatestUser(){
+    this.commonService.getAllUser().subscribe((response)=>{
+      this.allUser = response;
+    });
+  }
+
+  editUser(user:any){
+    this.isEdit=true;
+    this.userObj=user;
+  }
+
+  deleteUser(user:any){
+    this.commonService.deleteUser(user).subscribe(()=>{
+      this.getLatestUser();
+    });
+  }
+
+  updateUser(){
+    this.isEdit= !this.isEdit;
+    this.commonService.updateUser(this.userObj).subscribe(()=>{
+      this.getLatestUser();
+    });
+  }
 }
